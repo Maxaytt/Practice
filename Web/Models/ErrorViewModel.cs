@@ -1,4 +1,4 @@
-namespace Practice.Models
+namespace Web.Models
 {
     public class ErrorViewModel
     {
