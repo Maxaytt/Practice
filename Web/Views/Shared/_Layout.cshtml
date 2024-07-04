@@ -12,31 +12,23 @@
     <header>
         <nav class="navbar navbar-expand-sm navbar-toggleable-sm navbar-light bg-white border-bottom box-shadow mb-3">
             <div class="container-fluid">
-                <button class="navbar-toggler" type="button" data-bs-toggle="collapse" data-bs-target=".navbar-collapse" aria-controls="navbarSupportedContent"
-                        aria-expanded="false" aria-label="Toggle navigation">
-                    <span class="navbar-toggler-icon"></span>
-                </button>
-                <div class="collapse navbar-collapse">
-                    <ul class="navbar-nav me-auto mb-2 mb-lg-0">
-                        <li class="nav-item">
+                <div class="collapse navbar-collapse nav-bar" >                   
+
                             <a class="nav-link text-dark" asp-area="" asp-controller="Home" asp-action="Index">Films</a>
-                        </li>
-                    </ul>
-                    <ul class="navbar-nav ms-auto mb-2 mb-lg-0">
-                        <li class="nav-item">
                             <button type="button" class="btn btn-link nav-link" onclick="location.href='@Url.Action("Privacy", "Home")'">
                                 <img src="~/assets/logout-3-svgrepo-com.svg" alt="Logout" style="height: 1.5rem;" />
                             </button>
-                        </li>
-                    </ul>
+                        
+                    
                 </div>
             </div>
         </nav>
     </header>
 
-    <div class="container-fluid" style="height: 100%;">       
+    <main role="main" class="container-fluid" style="height: 100%;">
+        
             @RenderBody()
-    </div>
+    </main>
 
     <script src="~/lib/jquery/dist/jquery.min.js"></script>
     <script src="~/lib/bootstrap/dist/js/bootstrap.bundle.min.js"></script>
