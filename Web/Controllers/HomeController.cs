@@ -1,8 +1,8 @@
+using Domain.Models;
 using Microsoft.AspNetCore.Mvc;
-using Practice.Models;
 using System.Diagnostics;
 
-namespace Web.Controllers
+namespace Domain.Controllers
 {
     public class HomeController : Controller
     {
@@ -11,11 +11,6 @@ namespace Web.Controllers
         public HomeController(ILogger<HomeController> logger)
         {
             _logger = logger;
-        }
-
-        public IActionResult Index()
-        {
-            return View();
         }
 
         public IActionResult Privacy()
@@ -28,5 +23,26 @@ namespace Web.Controllers
         {
             return View(new ErrorViewModel { RequestId = Activity.Current?.Id ?? HttpContext.TraceIdentifier });
         }
+
+        public ActionResult Index()
+        {
+            var films = GetFilms(); 
+            return View(films);
+        }
+
+        private List<Film> GetFilms()
+        {
+            
+            return new List<Film>
+        {
+            new Film { Title = "Film 1 נננננננננננננננננננננננננננננננננננננננננננננננ", ImageUrl = "https://independent-thinkers.co.uk/wp-content/uploads/2022/02/Free-Online-Courses-with-Certificates.jpg" },
+            new Film { Title = "Film 2 ooooooooooooooooooooooooooooooooooooooooooooooooo", ImageUrl = "/images/film2.jpg" },
+            new Film { Title = "Film 3", ImageUrl = "/images/film3.jpg" },
+            new Film { Title = "Film 4", ImageUrl = "/images/film3.jpg" },
+
+        };
+        }
     }
+
+
 }
