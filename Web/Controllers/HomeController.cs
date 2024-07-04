@@ -1,6 +1,7 @@
-﻿using Microsoft.AspNetCore.Mvc;
+using Microsoft.AspNetCore.Mvc;
 using Domain.Models;
 using System.Diagnostics;
+
 
 namespace Web.Controllers
 {
