@@ -1,6 +1,8 @@
 using Infrastructure;
 using Microsoft.EntityFrameworkCore;
 
+
+
 var builder = WebApplication.CreateBuilder(args);
 
 var connectionString = builder.Configuration.GetConnectionString("DefaultConnection");
@@ -8,6 +10,9 @@ builder.Services.AddControllersWithViews();
 builder.Services.AddDbContext<AppDbContext>(options =>
     options.UseSqlServer(connectionString));
 builder.Services.AddHostedService<DbInitializer>();
+
+builder.Services.AddScoped<TokenService>();
+builder.Services.AddJWT(builder.Configuration);
 
 var app = builder.Build();
 
