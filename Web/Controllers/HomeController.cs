@@ -1,5 +1,5 @@
-using Microsoft.AspNetCore.Mvc;
-using Practice.Models;
+﻿using Microsoft.AspNetCore.Mvc;
+using Domain.Models;
 using System.Diagnostics;
 
 namespace Web.Controllers
@@ -7,7 +7,7 @@ namespace Web.Controllers
     public class HomeController : Controller
     {
         private readonly ILogger<HomeController> _logger;
-
+       
         public HomeController(ILogger<HomeController> logger)
         {
             _logger = logger;
