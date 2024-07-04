@@ -1,13 +1,14 @@
 using Microsoft.AspNetCore.Mvc;
-using Practice.Models;
+using Domain.Models;
 using System.Diagnostics;
+
 
 namespace Web.Controllers
 {
     public class HomeController : Controller
     {
         private readonly ILogger<HomeController> _logger;
-
+       
         public HomeController(ILogger<HomeController> logger)
         {
             _logger = logger;
