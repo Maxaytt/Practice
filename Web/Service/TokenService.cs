@@ -21,11 +21,11 @@ public class TokenService
         var key = Encoding.ASCII.GetBytes(secretKey);
         var tokenDescription = new SecurityTokenDescriptor
         {
-            Subject = new ClaimsIdentity(
-            [
+            Subject = new ClaimsIdentity(new[]
+            {
                 new Claim(ClaimTypes.Email, email),
-                new Claim("jti", id),
-            ]),
+                new Claim(JwtRegisteredClaimNames.Jti, id.ToString()),
+            }),
             Expires = DateTime.UtcNow.AddHours(1),
             SigningCredentials = new SigningCredentials(new SymmetricSecurityKey(key),SecurityAlgorithms.HmacSha256Signature),
             
