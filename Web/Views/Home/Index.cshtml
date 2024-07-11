@@ -17,8 +17,8 @@
                         <h5 class="card-title">@film.Name</h5>
                         <img class="card-img-top" src="@film.ImageUrl" alt="@film.Name">
                         <div class="card-body">
-                            <a asp-controller="Films" asp-action="Edit" asp-route-id="@film.Id" class="btn btn-primary">Edit</a>
-                            <form asp-controller="Films" asp-action="Delete" asp-route-id="@film.Id" method="post" style="display:inline;">
+                            <a asp-controller="Films" asp-action="Edit"  class="btn btn-primary">Edit</a>
+                            <form asp-controller="Films" asp-action="Delete"  method="post" style="display:inline;">
                                 <button type="submit" class="btn btn-danger">Delete</button>
                             </form>
                         </div>
