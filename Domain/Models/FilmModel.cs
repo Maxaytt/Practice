@@ -11,6 +11,7 @@ namespace Domain.Models
         public Guid Id { get; set; }
         public byte[] Content { get; set; } = null!;
         public string Name { get; set; } = null!;
-        public ICollection<Question> Questions { get; set; }
+        public ICollection<Question> Questions { get; set; } = null!;
+        public string ImageUrl { get; set; } = null!;
     }
 }
