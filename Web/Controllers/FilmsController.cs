@@ -26,7 +26,7 @@ public FilmsController(AppDbContext dbContext)
  return Ok(films);
 }    
 
-[HttpGet("{id}")]
+[HttpGet("{id:guid}")]
 public IActionResult GetById(Guid id)
 {
  var film = _dbContext.Films.Find(id);
@@ -38,7 +38,7 @@ public IActionResult GetById(Guid id)
 
 
 [HttpGet("Create")]
-[Authorize]
+
 public IActionResult Create()
 {
   return View();
@@ -46,7 +46,7 @@ public IActionResult Create()
 
 
 [HttpPost]
-[Authorize]
+
 public IActionResult Create([FromBody] Film film)
 {
   film.Id = Guid.NewGuid();
@@ -56,20 +56,20 @@ public IActionResult Create([FromBody] Film film)
 return RedirectToAction("Index", "Home");
 }
 
-[HttpGet("Edit/{id}")]
-        [Authorize]
-        public IActionResult Edit(Guid id)
-        {
-            var film = _dbContext.Films.Find(id);
-            if (film == null)
-                return NotFound();
+[HttpGet("Edit/{id:guid}")]
+       
+public IActionResult Edit(Guid id)
+{
+var film = _dbContext.Films.Find(id);
+if (film == null)
+  return NotFound();
 
-            return View(film);
-        }
+  return View(film);
+}
 
 
-[HttpPut("{id}")]
-[Authorize]
+[HttpPut("{id:guid}")]
+
 public IActionResult Edit(Guid id,[FromBody] Film film)
 {
  if (id != film.Id)
@@ -90,8 +90,8 @@ public IActionResult Edit(Guid id,[FromBody] Film film)
   return RedirectToAction("Index", "Home");
 }
           
-[HttpDelete("{id}")]
-[Authorize]
+[HttpDelete("{id:guid}")]
+
 public IActionResult Delete(Guid id)
 {
   var film = _dbContext.Films.Find(id);
