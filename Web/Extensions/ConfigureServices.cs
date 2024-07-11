@@ -1,6 +1,8 @@
 using Microsoft.AspNetCore.Authentication.JwtBearer;
 using Microsoft.IdentityModel.Tokens;
 using System.Text;
+
+namespace Web.Extensions;
 public static class ConfigureServices{
     public static IServiceCollection AddJWT(this IServiceCollection services, IConfiguration configuration){
         var secretKey = configuration["JwtSettings:SecretKey"]
