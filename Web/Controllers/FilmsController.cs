@@ -5,11 +5,12 @@ using Microsoft.EntityFrameworkCore;
 using Domain.Models;
 using System;
 using System.Linq;
+using Microsoft.EntityFrameworkCore.Metadata.Internal;
 
 namespace Web.Controllers;
 
 [Route("[controller]")]
-public class FilmsController : ControllerBase
+public class FilmsController : Controller
 {
 private readonly AppDbContext _dbContext;
 
@@ -35,6 +36,15 @@ public IActionResult GetById(Guid id)
  return Ok(film);   
 }
 
+
+[HttpGet("Create")]
+[Authorize]
+public IActionResult Create()
+{
+  return View();
+}
+
+
 [HttpPost]
 [Authorize]
 public IActionResult Create([FromBody] Film film)
@@ -43,12 +53,24 @@ public IActionResult Create([FromBody] Film film)
   _dbContext.Films.Add(film);
   _dbContext.SaveChanges();
 
- return CreatedAtAction(nameof(GetById),new {id = film.Id},film);
+return RedirectToAction("Index", "Home");
 }
+
+[HttpGet("Edit/{id}")]
+        [Authorize]
+        public IActionResult Edit(Guid id)
+        {
+            var film = _dbContext.Films.Find(id);
+            if (film == null)
+                return NotFound();
+
+            return View(film);
+        }
+
 
 [HttpPut("{id}")]
 [Authorize]
-public IActionResult Update(Guid id,[FromBody] Film film)
+public IActionResult Edit(Guid id,[FromBody] Film film)
 {
  if (id != film.Id)
    return BadRequest();
@@ -65,7 +87,7 @@ public IActionResult Update(Guid id,[FromBody] Film film)
   _dbContext.Films.Update(existingFilm);
   _dbContext.SaveChanges();   
 
-  return NoContent();
+  return RedirectToAction("Index", "Home");
 }
           
 [HttpDelete("{id}")]
