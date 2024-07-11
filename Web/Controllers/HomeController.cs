@@ -1,13 +1,14 @@
 using Domain.Models;
 using Microsoft.AspNetCore.Mvc;
+using Domain.Models;
 using System.Diagnostics;
 
-namespace Domain.Controllers
+namespace Web.Controllers
 {
     public class HomeController : Controller
     {
         private readonly ILogger<HomeController> _logger;
-
+       
         public HomeController(ILogger<HomeController> logger)
         {
             _logger = logger;
@@ -35,7 +36,7 @@ namespace Domain.Controllers
             
             return new List<Film>
         {
-            new Film { Title = "Film 1 ððððððððððððððððððððððððððððððððððððððððððððððð", ImageUrl = "https://independent-thinkers.co.uk/wp-content/uploads/2022/02/Free-Online-Courses-with-Certificates.jpg" },
+            new Film { Title = "Film 1 ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½", ImageUrl = "https://independent-thinkers.co.uk/wp-content/uploads/2022/02/Free-Online-Courses-with-Certificates.jpg" },
             new Film { Title = "Film 2 ooooooooooooooooooooooooooooooooooooooooooooooooo", ImageUrl = "/images/film2.jpg" },
             new Film { Title = "Film 3", ImageUrl = "/images/film3.jpg" },
             new Film { Title = "Film 4", ImageUrl = "/images/film3.jpg" },
