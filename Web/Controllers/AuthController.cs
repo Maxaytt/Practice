@@ -16,5 +16,6 @@ namespace Web.Controllers
         {
             return View("Register");
         }
+
     }
 }
