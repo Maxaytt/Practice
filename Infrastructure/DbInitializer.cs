@@ -11,7 +11,6 @@ namespace Infrastructure
         {
             using var scope = scopeFactory.CreateScope();
             var context = scope.ServiceProvider.GetRequiredService<AppDbContext>();
-            context.Database.EnsureCreated();
             await context.Database.MigrateAsync(cancellationToken);
         }
 
