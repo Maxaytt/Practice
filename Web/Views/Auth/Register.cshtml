@@ -1,11 +1,10 @@
+@using Domain.ViewModels
+@model RegisterViewModel
+
 @{
-    ViewData["Title"] = "Registration Page";
+    
 }
-@{
-    Layout = null;
-}
-<!DOCTYPE html>
-<html>
+
 <head>
     <meta name="viewport" content="width=device-width" />
     <title>Registration</title>
@@ -54,29 +53,32 @@
 <body>
     <div class="Reg-container">
         <h2>Registration</h2>
-        <form method="post" action="/Auth/Login">
+        <form method="post" asp-action="Login" asp-controller="Auth">
             <div class="form-group">
                 <label for="Email">Email</label>
                 <input type="text" id="Email" name="Email" required />
+                <span class="field-validation-valid text-danger" data-valmsg-for="@Model.Email">
             </div>
             <div class="form-group">
-                <label for="Name">Name</label>
-                <input type="text" id="Name" name="Name" required />
+                <label for="FirstName">Firstname</label>
+                <input type="text" id="FirstName" name="FirstName" required />
+                <span class="field-validation-valid text-danger" data-valmsg-for="@Model.FirstName">
             </div>
             <div class="form-group">
-                <label for="SurName">Surname</label>
-                <input type="text" id="SurName" name="SurName" required />
+                <label for="LastName">Lastname</label>
+                <input type="text" id="LastName" name="LastName" required />
+                <span class="field-validation-valid text-danger" data-valmsg-for="@Model.LastName">
             </div>
+
             <div class="form-group">
                 <label for="Password">Password</label>
                 <input type="password" id="Password" name="Password" required />
+                <span class="field-validation-valid text-danger" data-valmsg-for="@Model.Password">
             </div>
             <div class="form-group">
                 <button type="submit">Register</button>
             </div>
         </form>
-        <p class="text-center"> <a href="/Auth/Login">Already have an account?</a></p>
+        <p class="text-center"> <a asp-action="Index" asp-controller="Home">Already have an account?</a></p>
     </div>
 </body>
-</html>
-
