@@ -4,6 +4,8 @@ using System.Security.Claims;
 using System.Text;
 using Microsoft.IdentityModel.Tokens;
 
+namespace Web.Services;
+
 public class TokenService
 {
     private readonly IConfiguration _configuration;
