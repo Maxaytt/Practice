@@ -12,11 +12,11 @@ using Microsoft.EntityFrameworkCore.Storage.ValueConversion;
 namespace Infrastructure.Migrations
 {
     [DbContext(typeof(AppDbContext))]
-    [Migration("20240711081815_migracjaJakas")]
-    partial class migracjaJakas
+    [Migration("20240712082448_init")]
+    partial class init
     {
         /// <inheritdoc />
-        protected void BuildTargetModel(ModelBuilder modelBuilder)
+        protected override void BuildTargetModel(ModelBuilder modelBuilder)
         {
 #pragma warning disable 612, 618
             modelBuilder
@@ -27,19 +27,14 @@ namespace Infrastructure.Migrations
 
             modelBuilder.Entity("Domain.Models.Answer", b =>
                 {
-                    b.Property<int>("Id")
+                    b.Property<Guid>("Id")
                         .ValueGeneratedOnAdd()
-                        .HasColumnType("int");
-
-                    SqlServerPropertyBuilderExtensions.UseIdentityColumn(b.Property<int>("Id"));
+                        .HasColumnType("uniqueidentifier");
 
                     b.Property<bool>("IsTrue")
                         .HasColumnType("bit");
 
-                    b.Property<int>("QuestionId")
-                        .HasColumnType("int");
-
-                    b.Property<Guid>("QuestionId1")
+                    b.Property<Guid>("QuestionId")
                         .HasColumnType("uniqueidentifier");
 
                     b.Property<string>("Text")
@@ -48,7 +43,7 @@ namespace Infrastructure.Migrations
 
                     b.HasKey("Id");
 
-                    b.HasIndex("QuestionId1");
+                    b.HasIndex("QuestionId");
 
                     b.ToTable("Answers");
                 });
@@ -63,13 +58,41 @@ namespace Infrastructure.Migrations
                         .IsRequired()
                         .HasColumnType("varbinary(max)");
 
+                    b.Property<Guid>("ImageId")
+                        .HasColumnType("uniqueidentifier");
+
+                    b.Property<string>("ImageUrl")
+                        .IsRequired()
+                        .HasColumnType("nvarchar(max)");
+
                     b.Property<string>("Name")
                         .IsRequired()
                         .HasColumnType("nvarchar(max)");
 
                     b.HasKey("Id");
 
+                    b.HasIndex("ImageId");
+
                     b.ToTable("Films");
+                });
+
+            modelBuilder.Entity("Domain.Models.Image", b =>
+                {
+                    b.Property<Guid>("Id")
+                        .ValueGeneratedOnAdd()
+                        .HasColumnType("uniqueidentifier");
+
+                    b.Property<string>("Caption")
+                        .IsRequired()
+                        .HasColumnType("nvarchar(max)");
+
+                    b.Property<byte[]>("Content")
+                        .IsRequired()
+                        .HasColumnType("varbinary(max)");
+
+                    b.HasKey("Id");
+
+                    b.ToTable("Image");
                 });
 
             modelBuilder.Entity("Domain.Models.Question", b =>
@@ -305,11 +328,22 @@ namespace Infrastructure.Migrations
                 {
                     b.HasOne("Domain.Models.Question", "Question")
                         .WithMany("Answers")
-                        .HasForeignKey("QuestionId1")
+                        .HasForeignKey("QuestionId")
                         .OnDelete(DeleteBehavior.Cascade)
                         .IsRequired();
 
                     b.Navigation("Question");
+                });
+
+            modelBuilder.Entity("Domain.Models.Film", b =>
+                {
+                    b.HasOne("Domain.Models.Image", "Image")
+                        .WithMany("Films")
+                        .HasForeignKey("ImageId")
+                        .OnDelete(DeleteBehavior.Cascade)
+                        .IsRequired();
+
+                    b.Navigation("Image");
                 });
 
             modelBuilder.Entity("Domain.Models.Question", b =>
@@ -377,6 +411,11 @@ namespace Infrastructure.Migrations
             modelBuilder.Entity("Domain.Models.Film", b =>
                 {
                     b.Navigation("Questions");
+                });
+
+            modelBuilder.Entity("Domain.Models.Image", b =>
+                {
+                    b.Navigation("Films");
                 });
 
             modelBuilder.Entity("Domain.Models.Question", b =>
