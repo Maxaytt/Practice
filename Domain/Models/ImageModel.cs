@@ -8,7 +8,7 @@ namespace Domain.Models
 {
     public class Image
     {
-        Guid Guid { get; set; }
+        Guid Id { get; set; }
         public byte[] Content { get; set; }
    
         //Caption which is displayed when image cannot be loaded
