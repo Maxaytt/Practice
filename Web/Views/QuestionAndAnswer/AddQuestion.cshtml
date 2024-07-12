@@ -3,12 +3,16 @@
 @{
     ViewData["Title"] = "AddQuestion";
 }
-
+<script>
+    
+</script>
 <h1>Add Question</h1>
 
-<h1>Add question</h1>
 
 <form method="post">
-    <input asp-for="Text"/>
-    <input asp-for="Answers"/>
+    <div class="mb-4"><input asp-for="Text" placeholder="Question"/></div>
+    <div><input type="text" placeholder="Answer"/><button onclick="DeleteQuestion()" class="mb-3">Delete question</button>
+    
+    </div>
+    <button onclick="AddQuestion()">Add question</button>
 </form>
