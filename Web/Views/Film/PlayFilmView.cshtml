@@ -1,0 +1,4 @@
+﻿@model Guid
+
+<h1>@Url.Action("GetFilmName", "Film", new { id = Model })</h1>
+<video src="@Url.Action("GetFilm", "Film", new {id=Model})"/>

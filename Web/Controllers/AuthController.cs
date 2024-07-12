@@ -7,8 +7,9 @@ namespace Web.Controllers
 {
     public class AuthController : Controller
     {
+
         public IActionResult Login()
-        {
+        { 
             return View("Login");
         }
 
@@ -16,5 +17,6 @@ namespace Web.Controllers
         {
             return View("Register");
         }
+
     }
 }

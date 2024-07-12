@@ -1,5 +1,9 @@
 using Infrastructure;
 using Microsoft.EntityFrameworkCore;
+using Web.Services;
+using Web.Extensions;
+
+
 
 var builder = WebApplication.CreateBuilder(args);
 
@@ -8,6 +12,9 @@ builder.Services.AddControllersWithViews();
 builder.Services.AddDbContext<AppDbContext>(options =>
     options.UseSqlServer(connectionString));
 builder.Services.AddHostedService<DbInitializer>();
+
+builder.Services.AddScoped<TokenService>();
+builder.Services.AddJWT(builder.Configuration);
 
 var app = builder.Build();
 

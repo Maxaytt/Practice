@@ -10,5 +10,6 @@ namespace Infrastructure
     {
         public virtual DbSet<Answer> Answers {get;set;}
         public virtual  DbSet<Question> Questions{get;set;}
+        public virtual DbSet<Film> Films {get;set;}
     }
 }
