@@ -6,6 +6,7 @@ using Domain.Models;
 using System;
 using System.Linq;
 using Microsoft.EntityFrameworkCore.Metadata.Internal;
+using Domain.ViewModel;
 
 namespace Web.Controllers;
 
@@ -18,14 +19,14 @@ public FilmsController(AppDbContext dbContext)
 {
    _dbContext = dbContext;
 }
-            
+ /*        
 [HttpGet]
  public IActionResult GetAll()
 {
  var films = _dbContext.Films.ToList();
  return Ok(films);
 }    
-
+*/
 [HttpGet("{id:guid}")]
 public IActionResult GetById(Guid id)
 {
@@ -37,7 +38,7 @@ public IActionResult GetById(Guid id)
 }
 
 
-[HttpGet("Create")]
+[HttpGet]
 
 public IActionResult Create()
 {
@@ -47,10 +48,10 @@ public IActionResult Create()
 
 [HttpPost]
 
-public IActionResult Create([FromBody] Film film)
+public IActionResult Create(FilmUploadVM film)
 {
-  film.Id = Guid.NewGuid();
-  _dbContext.Films.Add(film);
+  //film.Id = Guid.NewGuid();
+  //_dbContext.Films.Add(film);
   _dbContext.SaveChanges();
 
 return RedirectToAction("Index", "Home");
@@ -111,6 +112,18 @@ public IActionResult GetFilmAsResource(Guid id)
   if (film == null)
      return NotFound();
   return File(film.Content, "application/octet-stream", film.Name);
+}
+
+[HttpGet("{id:guid}")]
+public IActionResult PlayFilm(Guid id)
+{
+    var film = _dbContext.Films.Find(id);
+    if (film == null)
+    return NotFound();
+    FilmVm viewModel = new FilmVm();
+    viewModel.Id = id;
+    viewModel.Name = film.Name;
+  return View(viewModel);
 }
 }    
 

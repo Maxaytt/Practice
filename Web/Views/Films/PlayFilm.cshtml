@@ -1,0 +1,5 @@
+﻿@model Domain.ViewModel.FilmVm
+<h1>Name</h1>
+<video>
+    <source src="@Url.Action("GetFilmAsResource", "Films", new {Model.Id})" type=video/mp4 />
+</video>

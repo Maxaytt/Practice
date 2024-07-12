@@ -2,6 +2,8 @@ using Domain.Models;
 using Microsoft.AspNetCore.Mvc;
 using Domain.Models;
 using System.Diagnostics;
+using Microsoft.EntityFrameworkCore;
+using Infrastructure;
 
 namespace Web.Controllers
 {
@@ -9,9 +11,13 @@ namespace Web.Controllers
     public class HomeController : Controller
     {
         private readonly ILogger<HomeController> _logger;
-       
-        public HomeController(ILogger<HomeController> logger)
+
+        private AppDbContext dbContext { get; set; }
+
+
+        public HomeController(ILogger<HomeController> logger, AppDbContext _dbContext)
         {
+            dbContext = _dbContext;
             _logger = logger;
         }
 
@@ -35,7 +41,7 @@ namespace Web.Controllers
 
         private List<Film> GetFilms()
         {
-            
+            /*
             return new List<Film>
         {
             new Film { Name = "Film 1 �����������������������������������������������", ImageUrl = "https://independent-thinkers.co.uk/wp-content/uploads/2022/02/Free-Online-Courses-with-Certificates.jpg" },
@@ -44,6 +50,8 @@ namespace Web.Controllers
             new Film { Name = "Film 4", ImageUrl = "/images/film3.jpg" },
 
         };
+            */
+            return dbContext.Films.ToList();
         }
     }
 

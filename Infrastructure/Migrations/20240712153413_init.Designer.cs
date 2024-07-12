@@ -12,7 +12,7 @@ using Microsoft.EntityFrameworkCore.Storage.ValueConversion;
 namespace Infrastructure.Migrations
 {
     [DbContext(typeof(AppDbContext))]
-    [Migration("20240712084618_init")]
+    [Migration("20240712153413_init")]
     partial class init
     {
         /// <inheritdoc />
@@ -61,17 +61,14 @@ namespace Infrastructure.Migrations
                     b.Property<Guid>("ImageId")
                         .HasColumnType("uniqueidentifier");
 
-                    b.Property<string>("ImageUrl")
-                        .IsRequired()
-                        .HasColumnType("nvarchar(max)");
-
                     b.Property<string>("Name")
                         .IsRequired()
                         .HasColumnType("nvarchar(max)");
 
                     b.HasKey("Id");
 
-                    b.HasIndex("ImageId");
+                    b.HasIndex("ImageId")
+                        .IsUnique();
 
                     b.ToTable("Films");
                 });
@@ -338,8 +335,8 @@ namespace Infrastructure.Migrations
             modelBuilder.Entity("Domain.Models.Film", b =>
                 {
                     b.HasOne("Domain.Models.Image", "Image")
-                        .WithMany("Films")
-                        .HasForeignKey("ImageId")
+                        .WithOne("Film")
+                        .HasForeignKey("Domain.Models.Film", "ImageId")
                         .OnDelete(DeleteBehavior.Cascade)
                         .IsRequired();
 
@@ -415,7 +412,8 @@ namespace Infrastructure.Migrations
 
             modelBuilder.Entity("Domain.Models.Image", b =>
                 {
-                    b.Navigation("Films");
+                    b.Navigation("Film")
+                        .IsRequired();
                 });
 
             modelBuilder.Entity("Domain.Models.Question", b =>
