@@ -2,6 +2,10 @@ using Domain.Models;
 using Infrastructure;
 using Microsoft.AspNetCore.Identity;
 using Microsoft.EntityFrameworkCore;
+using Web.Services;
+using Web.Extensions;
+
+
 
 var builder = WebApplication.CreateBuilder(args);
 
@@ -13,6 +17,9 @@ builder.Services.AddIdentity<User, IdentityRole<Guid>>()
     .AddEntityFrameworkStores<AppDbContext>()
     .AddSignInManager<SignInManager<User>>();
 builder.Services.AddHostedService<DbInitializer>();
+
+builder.Services.AddScoped<TokenService>();
+builder.Services.AddJWT(builder.Configuration);
 
 var app = builder.Build();
 
