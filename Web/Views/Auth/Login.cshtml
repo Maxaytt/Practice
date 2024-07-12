@@ -4,8 +4,6 @@
 @{
     Layout = null;
 }
-<!DOCTYPE html>
-<html>
 <head>
     <meta name="viewport" content="width=device-width" />
     <link rel="stylesheet" href="~/css/auth/login.css">
@@ -15,7 +13,7 @@
 <body>
     <div class="login-container">
         <h2>Login</h2>
-        <form method="post" action="/Account/Login">
+        <form method="post" asp-action="Login">
             <div class="form-group">
                 <label for="Username">Username</label>
                 <input type="text" id="Username" name="Username" required />
@@ -32,5 +30,4 @@
     </div>
     <a asp-controller="Home" asp-action="Index">Go to Home</a>
 </body>
-</html>
 
