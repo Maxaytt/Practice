@@ -4,7 +4,7 @@ namespace Web.Controllers
 {
     public class QuestionAndAnswerController : Controller
     {
-        public IActionResult Index()
+        public IActionResult AddQuestion()
         {
             return View();
         }
