@@ -15,12 +15,14 @@
                 <div class="col-md-4 mb-4">
                     <div class="card shadow-sm">
                         <h5 class="card-title">@film.Name</h5>
-                        <img class="card-img-top" src="@film.ImageUrl" alt="@film.Name">
+                        @{ //<img class="card-img-top" src="@film.ImageUrl" alt="@film.Name"> 
+                         } 
                         <div class="card-body">
                             <a asp-controller="Films" asp-action="Edit"  class="btn btn-primary">Edit</a>
                             <form asp-controller="Films" asp-action="Delete"  method="post" style="display:inline;">
                                 <button type="submit" class="btn btn-danger">Delete</button>
                             </form>
+                            <a href="@Url.Action(" playFilm", "Films" , new { id=film.Id});">Play film</a>
                         </div>
                     </div>
                 </div>
