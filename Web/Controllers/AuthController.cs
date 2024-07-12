@@ -48,20 +48,22 @@ public class AuthController(SignInManager<User> signIn, UserManager<User> userMa
         }
        
         var user = await signIn.UserManager.FindByEmailAsync(model.Email);
-        if (user is not null) return Conflict($"User {model.Email} already exists"); //todo: must be validation
+        if (user is not null) return Conflict($"User {model.Email} already exists");
 
         user = new User
         {
             Id = Guid.NewGuid(),
             FirstName = model.FirstName,
             LastName = model.LastName,
-            Email = model.Email
+            UserName = model.Email,
+            Email = model.Email,
+            Gmina = model.Gmina
         };
         var result = await userManager.CreateAsync(user, model.Password);
 
         if (!result.Succeeded)
         {
-            throw new Exception("Register fail");
+            throw new Exception("Authentication failed");
         }
 
         return RedirectToAction("Login", "Auth");
