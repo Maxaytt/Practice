@@ -8,7 +8,11 @@ namespace Domain.ViewModel
 {
     public class FilmVm
     {
-        public Guid Id { get; set; }
-        public string Name { get; set; }
+        public Guid FilmId { get; set; }
+        public Guid? ImageId { get; set; }
+        public string ImageContentType { get; set; }
+
+        public string Name {  get; set; }
+        public string Caption { get; set; }
     }
 }
