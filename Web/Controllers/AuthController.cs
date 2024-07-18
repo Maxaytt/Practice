@@ -3,69 +3,60 @@ using Microsoft.AspNetCore.Mvc;
 using Domain.Models;
 using Domain.ViewModels;
 
-
-namespace Web.Controllers; 
-
-public class AuthController(SignInManager<User> signIn, UserManager<User> userManager) : Controller
+namespace Web.Controllers
 {
-    private readonly SignInManager<User> signIn = signIn;
-    private readonly UserManager<User> userManager = userManager;
-
-    [HttpGet]
-    public IActionResult Login()
+    public class AuthController : Controller
     {
-        return View("Login");
-    }
+        private readonly SignInManager<User> _signInManager;
+        private readonly UserManager<User> _userManager;
 
-    [HttpPost]
-    public async Task<IActionResult> Login(string email, string password)
-    {
-        var user = await signIn.UserManager.FindByEmailAsync(email);
-        if (user is null) return NotFound($"User {email} not found"); //must be validation
-
-        var result = await signIn.PasswordSignInAsync(user, password, false, false);
-
-        if (!result.Succeeded) 
+        public AuthController(SignInManager<User> signInManager, UserManager<User> userManager)
         {
-            throw new Exception("Login fail");
+            _signInManager = signInManager;
+            _userManager = userManager;
         }
-        return RedirectToAction("Index", "Home");
-    }
 
-    [HttpGet]
-    public IActionResult Register()
-    {
-        var model = new RegisterViewModel();
-        return View("Register", model);
-    }
-
-    [HttpPost]
-    public async Task<IActionResult> Register(RegisterViewModel model)
-    {
-        if (!ModelState.IsValid)
+        [HttpGet]
+        public IActionResult Register()
         {
-            return RedirectToAction("Login");
+            var model = new RegisterViewModel();
+            return View("Register", model);
         }
+
+        [HttpPost]
+        public async Task<IActionResult> Register(RegisterViewModel model)
+        {
+            if (!ModelState.IsValid)
+            {
+                return View("Register", model); // Возвращаем форму регистрации с ошибками валидации
+            }
        
-        var user = await signIn.UserManager.FindByEmailAsync(model.Email);
-        if (user is not null) return Conflict($"User {model.Email} already exists");
+            var user = await _userManager.FindByEmailAsync(model.Email);
+            if (user != null)
+            {
+                ModelState.AddModelError("", $"User {model.Email} already exists");
+                return View("Register", model);
+            }
 
-        user = new User
-        {
-            Id = Guid.NewGuid(),
-            FirstName = model.FirstName,
-            LastName = model.LastName,
-            UserName = model.Email,
-            Email = model.Email,
-            Gmina = model.Gmina
-        };
-        var result = await userManager.CreateAsync(user, model.Password);
+            user = new User
+            {
+                Id = Guid.NewGuid(),
+                FirstName = model.FirstName,
+                LastName = model.LastName,
+                UserName = model.Email,
+                Email = model.Email,
+                Gmina = model.Gmina
+            };
 
-        if (!result.Succeeded)
-        {
-            throw new Exception("Authentication failed");
+            var result = await _userManager.CreateAsync(user, model.Password);
+
+            if (!result.Succeeded)
+            {
+                ModelState.AddModelError("", "Failed to create user");
+                return View("Register", model);
+            }
+
+            return RedirectToAction("Login", "Auth");
         }
-
-        return RedirectToAction("Login", "Auth");
     }
 }
