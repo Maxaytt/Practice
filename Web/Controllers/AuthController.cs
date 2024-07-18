@@ -2,17 +2,14 @@ using Microsoft.AspNetCore.Identity;
 using Microsoft.AspNetCore.Mvc;
 using Domain.Models;
 using Domain.ViewModels;
-using Web.Services;
-using Microsoft.AspNetCore.Authentication;
 
 
 namespace Web.Controllers; 
 
-public class AuthController(SignInManager<User> signIn, UserManager<User> userManager, TokenService tokenService) : Controller
+public class AuthController(SignInManager<User> signIn, UserManager<User> userManager) : Controller
 {
     private readonly SignInManager<User> signIn = signIn;
     private readonly UserManager<User> userManager = userManager;
-    private readonly TokenService tokenService = tokenService;
 
     [HttpGet]
     public IActionResult Login()
