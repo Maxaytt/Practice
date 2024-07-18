@@ -21,7 +21,7 @@ public class AuthController(SignInManager<User> signIn, UserManager<User> userMa
     public async Task<IActionResult> Login(string email, string password)
     {
         var user = await signIn.UserManager.FindByEmailAsync(email);
-        if (user is null) return NotFound($"User {email} not found"); //must be validation
+        if (user is null) return NotFound($"User {email} not found"); 
 
         var result = await signIn.PasswordSignInAsync(user, password, false, false);
 
@@ -29,6 +29,7 @@ public class AuthController(SignInManager<User> signIn, UserManager<User> userMa
         {
             throw new Exception("Login fail");
         }
+
         return RedirectToAction("Index", "Home");
     }
 
@@ -67,5 +68,11 @@ public class AuthController(SignInManager<User> signIn, UserManager<User> userMa
         }
 
         return RedirectToAction("Login", "Auth");
+    }
+
+    public async Task<IActionResult> Logout()
+    {
+        await signIn.SignOutAsync();
+        return RedirectToAction(nameof(AuthController.Login), "Auth");
     }
 }
