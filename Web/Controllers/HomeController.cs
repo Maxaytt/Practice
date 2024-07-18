@@ -4,6 +4,7 @@ using Domain.Models;
 using System.Diagnostics;
 using Microsoft.EntityFrameworkCore;
 using Infrastructure;
+using Domain.ViewModel;
 
 namespace Web.Controllers
 {
@@ -18,6 +19,7 @@ namespace Web.Controllers
         public HomeController(ILogger<HomeController> logger, AppDbContext _dbContext)
         {
             dbContext = _dbContext;
+            dbContext.Films.Include(p => p.Image);
             _logger = logger;
         }
 
@@ -39,19 +41,33 @@ namespace Web.Controllers
             return View(films);
         }
 
-        private List<Film> GetFilms()
+        private List<FilmVm> GetFilms()
         {
-            /*
-            return new List<Film>
-        {
-            new Film { Name = "Film 1 �����������������������������������������������", ImageUrl = "https://independent-thinkers.co.uk/wp-content/uploads/2022/02/Free-Online-Courses-with-Certificates.jpg" },
-            new Film { Name = "Film 2 ooooooooooooooooooooooooooooooooooooooooooooooooo", ImageUrl = "/images/film2.jpg" },
-            new Film { Name = "Film 3", ImageUrl = "/images/film3.jpg" },
-            new Film { Name = "Film 4", ImageUrl = "/images/film3.jpg" },
+            
+            List<FilmVm> films = new List<FilmVm>();
 
-        };
-            */
-            return dbContext.Films.ToList();
+            var collection = dbContext.Films
+                .Include(p => p.Image)
+                .Select(p => new { p.Id,
+                    p.ImageId, 
+                    p.Name, 
+                    p.Image.ContentType, 
+                    ImageContentType = p.Image.ContentType, 
+                    ImageCaption = p.Image.Caption });
+
+            foreach (var film in collection)
+            {
+                films.Add(new FilmVm
+                {
+                    FilmId = film.Id,
+                    ImageId = film.ImageId,
+                    Caption = film.ImageCaption,
+                    ImageContentType = film.ImageContentType,
+                    Name = film.Name,
+                });
+            }
+            
+            return films;
         }
     }
 
