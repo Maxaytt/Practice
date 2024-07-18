@@ -7,10 +7,10 @@ using Microsoft.AspNetCore.Http;
 using System.Web;
 namespace Domain.ViewModel
 {
-    public class FilmUploadVM
+    public class FilmEditOrUploadVM
     {
-        public IFormFile VideoFile { get; set; }
-        public IFormFile ImageFile { get; set; }
-        public string Name { get; set; }
+        public IFormFile VideoFile { get; set; } = null!;
+        public IFormFile ImageFile { get; set; } = null!;
+        public string Name { get; set; } = null!;
     }
 }
