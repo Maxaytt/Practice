@@ -5,14 +5,14 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>User Profile</title>
+    <title>Profile</title>
 
     <link href="https://stackpath.bootstrapcdn.com/bootstrap/4.5.0/css/bootstrap.min.css" rel="stylesheet">
     <link rel="stylesheet" href="~/css/profile/profile.css">
 </head>
 <body>
     <div class="container my-5">
-        <h1>User Profile</h1>
+        <h1>Profile</h1>
         <div class="card">
             <div class="card-body">
                 <div class="form-group">
@@ -31,7 +31,8 @@
                     <label for="gmina">Gmina</label>
                     <input type="text" class="form-control" id="gmina" name="Gmina" value="@Model.Gmina" readonly>
                 </div>
-                <a href="@Url.Action("Edit", new { id = Model.Id })" class="btn btn-primary">Edit</a>
+                <a asp-action="Edit" class="btn btn-primary">Edit</a>
+                <a asp-action="Index" asp-controller="Home" class="btn btn-secondary">Back</a>
             </div>
         </div>
     </div>
