@@ -46,18 +46,16 @@ public IActionResult Create()
 
 
 [HttpPost]
-
 public IActionResult Create([FromBody] Film film)
 {
-  film.Id = Guid.NewGuid();
-  _dbContext.Films.Add(film);
-  _dbContext.SaveChanges();
+    film.Id = Guid.NewGuid();
+    _dbContext.Films.Add(film);
+    _dbContext.SaveChanges();
 
-return RedirectToAction("Index", "Home");
+    return RedirectToAction("Index", "Home");
 }
 
-[HttpGet("Edit/{id:guid}")]
-       
+[HttpGet("Edit/{id:guid}")]    
 public IActionResult Edit(Guid id)
 {
 var film = _dbContext.Films.Find(id);
