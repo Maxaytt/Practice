@@ -3,6 +3,7 @@ using System.ComponentModel.DataAnnotations;
 
 namespace Domain.ViewModels;
 
+
 public class RegisterViewModel
 {
     [Required(ErrorMessage = "Email is required")]
@@ -10,11 +11,11 @@ public class RegisterViewModel
     public string Email { get; set; } = null!;
 
     [Required(ErrorMessage = "First name is required")]
-    [MinLength(2, ErrorMessage = "Password must have minimum of 8 cymbols")]
+    [MinLength(2, ErrorMessage = "First name must have minimum of 2 cymbols")]
     public string FirstName { get; set; } = null!;
 
     [Required(ErrorMessage = "Last name is required")]
-    [MinLength(2, ErrorMessage = "Password must have minimum of 8 cymbols")]
+    [MinLength(2, ErrorMessage = "Last name must have minimum of 2 cymbols")]
     public string LastName { get; set; } = null!;
 
     [Required(ErrorMessage = "Password is required")]
