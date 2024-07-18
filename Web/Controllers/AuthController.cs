@@ -2,14 +2,17 @@ using Microsoft.AspNetCore.Identity;
 using Microsoft.AspNetCore.Mvc;
 using Domain.Models;
 using Domain.ViewModels;
+using Web.Services;
+using Microsoft.AspNetCore.Authentication;
 
 
 namespace Web.Controllers; 
 
-public class AuthController(SignInManager<User> signIn, UserManager<User> userManager) : Controller
+public class AuthController(SignInManager<User> signIn, UserManager<User> userManager, TokenService tokenService) : Controller
 {
     private readonly SignInManager<User> signIn = signIn;
     private readonly UserManager<User> userManager = userManager;
+    private readonly TokenService tokenService = tokenService;
 
     [HttpGet]
     public IActionResult Login()
@@ -21,7 +24,7 @@ public class AuthController(SignInManager<User> signIn, UserManager<User> userMa
     public async Task<IActionResult> Login(string email, string password)
     {
         var user = await signIn.UserManager.FindByEmailAsync(email);
-        if (user is null) return NotFound($"User {email} not found"); //must be validation
+        if (user is null) return NotFound($"User {email} not found"); 
 
         var result = await signIn.PasswordSignInAsync(user, password, false, false);
 
@@ -29,6 +32,7 @@ public class AuthController(SignInManager<User> signIn, UserManager<User> userMa
         {
             throw new Exception("Login fail");
         }
+
         return RedirectToAction("Index", "Home");
     }
 
@@ -67,5 +71,11 @@ public class AuthController(SignInManager<User> signIn, UserManager<User> userMa
         }
 
         return RedirectToAction("Login", "Auth");
+    }
+
+    public async Task<IActionResult> Logout()
+    {
+        await signIn.SignOutAsync();
+        return RedirectToAction(nameof(AuthController.Login), "Auth");
     }
 }
