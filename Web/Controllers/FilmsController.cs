@@ -21,7 +21,7 @@ public class FilmsController : Controller
         return Ok(films);
     }    
 
-    [HttpGet("[id:guid]")]
+    [HttpGet("{id:guid}")]
     public IActionResult GetById(Guid id)
     {
         var film = _dbContext.Films.Find(id);
@@ -97,7 +97,7 @@ public class FilmsController : Controller
         return NoContent();
     }
     
-    [HttpGet("{id:guid}")]
+    [HttpGet("{id:guid}/resource")]
     public IActionResult GetFilmAsResource(Guid id)
     {
         var film = _dbContext.Films.Find(id);
