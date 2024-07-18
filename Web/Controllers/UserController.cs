@@ -26,7 +26,7 @@ namespace Web.Controllers
                 return BadRequest("Invalid user ID format.");
             }
 
-            var user = await _context.Users.FirstOrDefaultAsync(u => u.Id == userId);;
+            var user = await _context.Users.FirstOrDefaultAsync(u => u.Id == userId);
 
             if (user == null)
             {
@@ -36,8 +36,20 @@ namespace Web.Controllers
             return View(user);
         }
 
+        [HttpGet]
+        public async Task<IActionResult> Edit(Guid id)
+        {
+            var user = await _context.Users.FirstOrDefaultAsync(u => u.Id == id);
+            if (user == null)
+            {
+                return NotFound($"User with ID '{id}' not found.");
+            }
+
+            return View(user);
+        }
+
         [HttpPost]
-        public async Task<IActionResult> Index(User model)
+        public async Task<IActionResult> Edit(User model)
         {
             if (ModelState.IsValid)
             {
@@ -46,7 +58,7 @@ namespace Web.Controllers
                 {
                     return NotFound($"User with ID '{model.Id}' not found.");
                 }
-
+               
                 user.FirstName = model.FirstName;
                 user.LastName = model.LastName;
                 user.Email = model.Email;
@@ -56,11 +68,7 @@ namespace Web.Controllers
                 return RedirectToAction(nameof(Index));
             }
 
-            return View(model);
+            return View(model); // Возвращаем модель с ошибками валидации
         }
-     // Проблемма с пост , не сохраняет в БД
-       
     }
 }
-
-
