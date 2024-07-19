@@ -13,120 +13,142 @@ namespace Web.Controllers;
 [Route("[controller]")]
 public class FilmsController : Controller
 {
-private readonly AppDbContext _dbContext;
+    private readonly AppDbContext _dbContext;
 
-public FilmsController(AppDbContext dbContext)
-{
-   _dbContext = dbContext;
-}
- /*        
-[HttpGet]
- public IActionResult GetAll()
-{
- var films = _dbContext.Films.ToList();
- return Ok(films);
-}    
-*/
-[HttpGet("{id:guid}")]
-public IActionResult GetById(Guid id)
-{
- var film = _dbContext.Films.Find(id);
- if (film==null)
-   return NotFound();
-
- return Ok(film);   
-}
-
-
-[HttpGet]
-
-public IActionResult Create()
-{
-  return View();
-}
-
-
-[HttpPost]
-public IActionResult Create(FilmEditOrUploadVM film)
-{
-    //film.Id = Guid.NewGuid();
-    //_dbContext.Films.Add(film);
-    Film filmForDatabase = new Film();
-    Image imageForDatabse = new Image();
-    
-    imageForDatabse.Id = new Guid();
-    imageForDatabse.Caption = film.Name;
-    imageForDatabse.ContentType = film.ImageFile.ContentType;
-
-    filmForDatabase.Id = new Guid();
-    filmForDatabase.Name = film.Name;
-    filmForDatabase.Image = imageForDatabse;
-    filmForDatabase.ContentType = film.VideoFile.ContentType;
-
-
-    //Converting IFormFile to byte[] and saving into imageForDatabase's property content
-    if (film.ImageFile != null)
+    public FilmsController(AppDbContext dbContext)
     {
-        using (var item = new MemoryStream())
-        {
-            film.ImageFile.CopyTo(item);
-            imageForDatabse.Content = item.ToArray();
-        }
+        _dbContext = dbContext;
     }
-
-    //Converting IFormFile to byte[] and saving into FilmForDatabase's property content
-    if (film.VideoFile != null)
+    /*        
+   [HttpGet]
+    public IActionResult GetAll()
+   {
+    var films = _dbContext.Films.ToList();
+    return Ok(films);
+   }    
+   */
+    [HttpGet("{id:guid}")]
+    public IActionResult GetById(Guid id)
     {
-        using (var item = new MemoryStream())
-        {
-            film.VideoFile.CopyTo(item);
-            filmForDatabase.Content = item.ToArray();
-        }
+        var film = _dbContext.Films.Find(id);
+        if (film == null)
+            return NotFound();
+
+        return Ok(film);
     }
 
 
-    _dbContext.Images.Add(imageForDatabse);
-    _dbContext.Films.Add(filmForDatabase);  
-    _dbContext.SaveChanges();
+    [HttpGet]
 
-    return RedirectToAction("Index", "Home");
-}
+    public IActionResult Create()
+    {
+        return View();
+    }
+
+
+    [HttpPost]
+    public IActionResult Create(CreateEditFilmVm film)
+    {
+        //film.Id = Guid.NewGuid();
+        //_dbContext.Films.Add(film);
+        Film filmForDatabase = new Film();
+        Image imageForDatabse = new Image();
+
+        imageForDatabse.Id = film.Id;
+        imageForDatabse.Caption = film.Name;
+        imageForDatabse.ContentType = film.ImageFile.ContentType;
+
+        filmForDatabase.Id = new Guid();
+        filmForDatabase.Name = film.Name;
+        filmForDatabase.Image = imageForDatabse;
+        filmForDatabase.ContentType = film.VideoFile.ContentType;
+
+
+        //Converting IFormFile to byte[] and saving into imageForDatabase's property content
+        if (film.ImageFile != null)
+        {
+            using (var item = new MemoryStream())
+            {
+                film.ImageFile.CopyTo(item);
+                imageForDatabse.Content = item.ToArray();
+            }
+        }
+
+        //Converting IFormFile to byte[] and saving into FilmForDatabase's property content
+        if (film.VideoFile != null)
+        {
+            using (var item = new MemoryStream())
+            {
+                film.VideoFile.CopyTo(item);
+                filmForDatabase.Content = item.ToArray();
+            }
+        }
+
+
+        _dbContext.Images.Add(imageForDatabse);
+        _dbContext.Films.Add(filmForDatabase);
+        _dbContext.SaveChanges();
+
+        return RedirectToAction("Index", "Home");
+    }
 
     [HttpGet("Edit/{id:guid}")]
     public IActionResult Edit(Guid id)
     {
         var film = _dbContext.Films.Find(id);
-        FilmEditOrUploadVM ViewModel = new FilmEditOrUploadVM
+        CreateEditFilmVm ViewModel = new CreateEditFilmVm 
         {
             Name = film.Name
         };
         if (film == null)
-          return NotFound();
-
+            return NotFound();
+        ViewModel.Id = id;
         return View(ViewModel);
     }
 
 
-    [HttpPut("{id:guid}")]
-
-    public IActionResult Edit(Guid id,[FromBody] Film film)
+    [HttpPost("EditAndAdd")]
+    public IActionResult EditAndAdd(CreateEditFilmVm ViewModel)
     {
-     if (id != film.Id)
-       return BadRequest();
+        /*
+         var existingFilm = _dbContext.Films.Find(id);
+         if(existingFilm == null)
+         return NotFound();
 
+          existingFilm.Name = film.Name;
+          existingFilm.Content = film.Content;
+          existingFilm.Questions = film.Questions;
 
-     var existingFilm = _dbContext.Films.Find(id);
-     if(existingFilm == null)
-     return NotFound();
+          _dbContext.Films.Update(existingFilm);
+          _dbContext.SaveChanges();   
+        */
+        var existingFilm = _dbContext.Films.Include(p=>p.Image).First(p=>p.Id == ViewModel.Id);
+        
+        if (ViewModel.Name != null)
+        {
+            existingFilm.Name = ViewModel.Name;
+            existingFilm.Image.Caption=ViewModel.Name;
+        }
+        if(ViewModel.ImageFile != null)
+        {
+            using (var item = new MemoryStream())
+            {
+                ViewModel.ImageFile.CopyTo(item);
+                existingFilm.Image.Content = item.ToArray();
+            }
+        }
 
-      existingFilm.Name = film.Name;
-      existingFilm.Content = film.Content;
-      existingFilm.Questions = film.Questions;
-
-      _dbContext.Films.Update(existingFilm);
-      _dbContext.SaveChanges();   
-
-      return RedirectToAction("Index", "Home");
+        if (ViewModel.VideoFile != null)
+        {
+            using (var item = new MemoryStream())
+            {
+                ViewModel.VideoFile.CopyTo(item);
+                existingFilm.Content = item.ToArray();
+            }
+        }
+        _dbContext.Films.Update(existingFilm);
+        _dbContext.SaveChanges();
+        return RedirectToAction("Index", "Home");
     }
           
     [HttpDelete("Delete/{id:guid}")]
