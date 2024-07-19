@@ -7,14 +7,17 @@
   </PropertyGroup>
 
   <ItemGroup>
+    <Content Remove="wwwroot\js\EditFilm.js" />
     <Content Remove="wwwroot\js\HomeIndex.js" />
   </ItemGroup>
 
   <ItemGroup>
+    <_ContentIncludedByDefault Remove="wwwroot\js\EditFilm.js" />
     <_ContentIncludedByDefault Remove="wwwroot\js\HomeIndex.js" />
   </ItemGroup>
 
   <ItemGroup>
+    <None Include="wwwroot\js\EditFilm.js" />
     <None Include="wwwroot\js\HomeIndex.js" />
   </ItemGroup>
    <ItemGroup>
