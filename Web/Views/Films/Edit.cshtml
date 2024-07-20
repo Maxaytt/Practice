@@ -1,26 +1,25 @@
-@model Domain.Models.Film
+@model Domain.ViewModel.CreateEditFilmVm
 
-<!DOCTYPE html>
-<html>
-<head>
-    <title>Edit Film</title>
-    <link rel="stylesheet" href="https://stackpath.bootstrapcdn.com/bootstrap/4.3.1/css/bootstrap.min.css" />
-</head>
-<body>
-    <div class="container">
-        <h2>Edit Film</h2>
-        <form asp-action="Edit" method="post">
-            <input type="hidden" asp-for="Id" />
-            <div class="form-group">
-                <label for="Name">Name</label>
-                <input type="text" class="form-control" id="Name" asp-for="Name" required />
-            </div>
-            <div class="form-group">
-                <label for="Content">Content</label>
-                <input type="file" class="form-control" id="Content" name="Content" />
-            </div>
-            <button type="submit" class="btn btn-primary">Save</button>
-        </form>
-    </div>
-</body>
-</html>
+<h1>Edit Film</h1>
+<form asp-action="EditAndAdd" asp-controller="Films" method="post" enctype="multipart/form-data">
+    <label asp-for="Name" id="NameFieldset">Name</label>
+    <input asp-for="Name" />
+    <br/>
+
+    <input type="checkbox" id="checkboxForVideo" /> <label asp-for="VideoFile">Video File</label>
+    <fieldset id="VideoFileFieldset" disabled>
+        <input asp-for="VideoFile"/>
+    </fieldset>
+    <br/>
+
+    <input type="checkbox" id="checkboxForImage"/><label asp-for="ImageFile">Image File</label>
+    <fieldset id="ImageFileFieldset" disabled>
+        <input asp-for="ImageFile" />
+    </fieldset>
+    <br/>
+
+    <input asp-for="Id" hidden/>
+    <button type="submit" class="btn btn-primary">Edit</button>
+</form>
+
+<script src="~/js/EditFilm.js"></script>
