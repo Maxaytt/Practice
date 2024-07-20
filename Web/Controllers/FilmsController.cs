@@ -1,11 +1,7 @@
 ﻿using Infrastructure;
-using Microsoft.AspNetCore.Authorization;
 using Microsoft.AspNetCore.Mvc;
 using Microsoft.EntityFrameworkCore;
 using Domain.Models;
-using System;
-using System.Linq;
-using Microsoft.EntityFrameworkCore.Metadata.Internal;
 using Domain.ViewModel;
 
 namespace Web.Controllers;
@@ -19,14 +15,7 @@ public class FilmsController : Controller
     {
         _dbContext = dbContext;
     }
-    /*        
-   [HttpGet]
-    public IActionResult GetAll()
-   {
-    var films = _dbContext.Films.ToList();
-    return Ok(films);
-   }    
-   */
+
     [HttpGet("{id:guid}")]
     public IActionResult GetById(Guid id)
     {
@@ -39,7 +28,6 @@ public class FilmsController : Controller
 
 
     [HttpGet]
-
     public IActionResult Create()
     {
         return View();
@@ -63,34 +51,19 @@ public class FilmsController : Controller
             ContentType = film.VideoFile.ContentType
         };
 
-        imageForDatabse.Id = film.Id;
-        imageForDatabse.Caption = film.Name;
-        imageForDatabse.ContentType = film.ImageFile.ContentType;
 
-        filmForDatabase.Id = new Guid();
-        filmForDatabase.Name = film.Name;
-        filmForDatabase.Image = imageForDatabse;
-        filmForDatabase.ContentType = film.VideoFile.ContentType;
-
-
-        //Converting IFormFile to byte[] and saving into imageForDatabase's property content
-        if (film.ImageFile != null)
+        if (film.ImageFile is not null)
         {
-            using (var item = new MemoryStream())
-            {
-                film.ImageFile.CopyTo(item);
-                imageForDatabse.Content = item.ToArray();
-            }
+            using var item = new MemoryStream();
+            film.ImageFile.CopyTo(item);
+            imageForDatabse.Content = item.ToArray();
         }
 
-        //Converting IFormFile to byte[] and saving into FilmForDatabase's property content
-        if (film.VideoFile != null)
+        if (film.VideoFile is not null)
         {
-            using (var item = new MemoryStream())
-            {
-                film.VideoFile.CopyTo(item);
-                filmForDatabase.Content = item.ToArray();
-            }
+            using var item = new MemoryStream();
+            film.VideoFile.CopyTo(item);
+            filmForDatabase.Content = item.ToArray();
         }
 
 
@@ -111,51 +84,35 @@ public class FilmsController : Controller
         {
             Name = film.Name
         };
-        if (film == null)
-            return NotFound();
-        ViewModel.Id = id;
-        return View(ViewModel);
+        viewModel.Id = id;
+        return View(viewModel);
     }
 
 
     [HttpPost("EditAndAdd")]
     public IActionResult EditAndAdd(CreateEditFilmVm ViewModel)
     {
-        /*
-         var existingFilm = _dbContext.Films.Find(id);
-         if(existingFilm == null)
-         return NotFound();
-
-          existingFilm.Name = film.Name;
-          existingFilm.Content = film.Content;
-          existingFilm.Questions = film.Questions;
-
-          _dbContext.Films.Update(existingFilm);
-          _dbContext.SaveChanges();   
-        */
-        var existingFilm = _dbContext.Films.Include(p=>p.Image).First(p=>p.Id == ViewModel.Id);
+        var existingFilm = _dbContext.Films
+            .Include(p => p.Image)
+            .First(p=>p.Id == ViewModel.Id);
         
-        if (ViewModel.Name != null)
+        if (ViewModel.Name is not null)
         {
             existingFilm.Name = ViewModel.Name;
             existingFilm.Image.Caption=ViewModel.Name;
         }
-        if(ViewModel.ImageFile != null)
+        if(ViewModel.ImageFile is not null)
         {
-            using (var item = new MemoryStream())
-            {
-                ViewModel.ImageFile.CopyTo(item);
-                existingFilm.Image.Content = item.ToArray();
-            }
+            using var item = new MemoryStream();
+            ViewModel.ImageFile.CopyTo(item);
+            existingFilm.Image.Content = item.ToArray();
         }
 
-        if (ViewModel.VideoFile != null)
+        if (ViewModel.VideoFile is not null)
         {
-            using (var item = new MemoryStream())
-            {
-                ViewModel.VideoFile.CopyTo(item);
-                existingFilm.Content = item.ToArray();
-            }
+            using var item = new MemoryStream();
+            ViewModel.VideoFile.CopyTo(item);
+            existingFilm.Content = item.ToArray();
         }
         _dbContext.Films.Update(existingFilm);
         _dbContext.SaveChanges();
@@ -166,7 +123,7 @@ public class FilmsController : Controller
     public IActionResult Delete(Guid id)
     {
       var film = _dbContext.Films.Find(id);
-      if(film == null)
+      if(film is null)
         return NotFound();
 
       _dbContext.Films.Remove(film);
@@ -179,7 +136,7 @@ public class FilmsController : Controller
     public IActionResult GetFilmAsResource(Guid id)
     {
       var film = _dbContext.Films.Find(id);
-      if (film == null)
+      if (film is null)
          return NotFound();
       return File(film.Content, film.ContentType, film.Name);
     }
@@ -188,7 +145,7 @@ public class FilmsController : Controller
     public IActionResult GetImageAsResource(Guid id)
     {
         var image = _dbContext.Images.Find(id);
-        if (image == null)
+        if (image is null)
             return NotFound();
         return File(image.Content, image.ContentType, image.Caption);
     }
@@ -201,10 +158,12 @@ public class FilmsController : Controller
         if (film == null) 
             return NotFound();
 
-        PlayFilmVm viewModel = new PlayFilmVm();
-        viewModel.Id = id;
-        viewModel.Name = film.Name;
-        viewModel.ContentType = film.ContentType;
+        var viewModel = new PlayFilmVm()
+        {
+            Id = id,
+            Name = film.Name,
+            ContentType = film.ContentType,
+        };
         return View(viewModel);
     }
 }    
