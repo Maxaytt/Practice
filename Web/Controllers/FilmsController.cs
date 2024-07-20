@@ -2,6 +2,7 @@
 using Microsoft.AspNetCore.Mvc;
 using Domain.Models;
 using Domain.ViewModel;
+using Microsoft.EntityFrameworkCore;
 
 namespace Web.Controllers;
 
@@ -40,7 +41,7 @@ public class FilmsController : Controller
         {
             Id = Guid.NewGuid(),
             Caption = film.Name,
-            ContentType = film.ImageFile.ContentType
+            ContentType = film.ImageFile.ContentType,
         };
         var filmForDatabase = new Film
         {
@@ -50,21 +51,19 @@ public class FilmsController : Controller
             ContentType = film.VideoFile.ContentType
         };
 
-
         if (film.ImageFile is not null)
         {
-            using var item = new MemoryStream();
-            film.ImageFile.CopyTo(item);
-            imageForDatabse.Content = item.ToArray();
+            using var imageStream = new MemoryStream();
+            film.ImageFile.CopyTo(imageStream);
+            imageForDatabse.Content = imageStream.ToArray();
         }
 
         if (film.VideoFile is not null)
         {
-            using var item = new MemoryStream();
-            film.VideoFile.CopyTo(item);
-            filmForDatabase.Content = item.ToArray();
+            using var filmStream = new MemoryStream();
+            film.VideoFile.CopyTo(filmStream);
+            filmForDatabase.Content = filmStream.ToArray();
         }
-
 
         _dbContext.Images.Add(imageForDatabse);
         _dbContext.Films.Add(filmForDatabase);
@@ -92,14 +91,15 @@ public class FilmsController : Controller
     public IActionResult EditAndAdd(CreateEditFilmVm ViewModel)
     {
         var existingFilm = _dbContext.Films
-            .Include(p => p.Image)
-            .First(p=>p.Id == ViewModel.Id);
+            .Include(f => f.Image)
+            .First(f=>f.Id == ViewModel.Id);
         
         if (ViewModel.Name is not null)
         {
             existingFilm.Name = ViewModel.Name;
-            existingFilm.Image.Caption=ViewModel.Name;
+            existingFilm.Image.Caption = ViewModel.Name;
         }
+
         if(ViewModel.ImageFile is not null)
         {
             using var item = new MemoryStream();
