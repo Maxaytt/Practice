@@ -2,7 +2,7 @@
 
 public class FilmVm
 {
-    public Guid FilmId { get; set; }
+    public Guid Id { get; set; }
     public Guid? ImageId { get; set; }
     public string ImageContentType { get; set; } = null!;
     public string Name { get; set; } = null!;
