@@ -1,11 +1,11 @@
-@using Domain.ViewModels
-@model RegisterViewModel
+@model Domain.ViewModels.RegisterViewModel
 @{
     Layout = null;
 }
 
 <head>
     <meta name="viewport" content="width=device-width" />
+    <link href="https://stackpath.bootstrapcdn.com/bootstrap/4.5.0/css/bootstrap.min.css" rel="stylesheet">
     <link rel="stylesheet" href="~/css/auth/register.css">
     <title>Registration</title>
 </head>
@@ -14,34 +14,38 @@
         <h2>Registration</h2>
         <form method="post" asp-action="Register" asp-controller="Auth">
             <div class="form-group">
-                <label for="Email">Email</label>
-                <input type="text" id="Email" name="Email" required />
-                <span class="field-validation-valid text-danger" data-valmsg-for="@Model.Email">
+                <label asp-for="Email"></label>
+                <input asp-for="Email" class="form-control" />
+                <span asp-validation-for="Email" class="text-danger"></span>
             </div>
             <div class="form-group">
-                <label for="FirstName">Firstname</label>
-                <input type="text" id="FirstName" name="FirstName" required />
-                <span class="field-validation-valid text-danger" data-valmsg-for="@Model.FirstName">
+                <label asp-for="FirstName"></label>
+                <input asp-for="FirstName" class="form-control" />
+                <span asp-validation-for="FirstName" class="text-danger"></span>
             </div>
             <div class="form-group">
-                <label for="LastName">Lastname</label>
-                <input type="text" id="LastName" name="LastName" required />
-                <span class="field-validation-valid text-danger" data-valmsg-for="@Model.LastName">
-            </div>
-
-            <div class="form-group">
-                <label for="Password">Password</label>
-                <input type="password" id="Password" name="Password" required />
-                <span class="field-validation-valid text-danger" data-valmsg-for="@Model.Password">
+                <label asp-for="LastName"></label>
+                <input asp-for="LastName" class="form-control" />
+                <span asp-validation-for="LastName" class="text-danger"></span>
             </div>
             <div class="form-group">
-                <label for="Gmina">Gmina</label>
-                <input type="text" id="Gmina" name="Gmina" required />
+                <label asp-for="Password"></label>
+                <input asp-for="Password" type="password" class="form-control" />
+                <span asp-validation-for="Password" class="text-danger"></span>
             </div>
             <div class="form-group">
-                <button type="submit">Register</button>
+                <label asp-for="Gmina"></label>
+                <input asp-for="Gmina" class="form-control" />
+                <span asp-validation-for="Gmina" class="text-danger"></span>
+            </div>
+            <div class="form-group">
+                <button type="submit" class="btn btn-primary">Register</button>
             </div>
         </form>
-        <p class="text-center"> <a asp-action="Login" asp-controller="Auth">Already have an account?</a></p>
+        <p class="text-center">
+            <a asp-action="Login" asp-controller="Auth">Already have an account?</a>
+        </p>
     </div>
+    <script src="https://code.jquery.com/jquery-3.5.1.slim.min.js"></script>
+    <script src="https://stackpath.bootstrapcdn.com/bootstrap/4.5.0/js/bootstrap.min.js"></script>
 </body>
