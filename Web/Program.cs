@@ -1,9 +1,7 @@
+using Domain.Models;
 using Infrastructure;
+using Microsoft.AspNetCore.Identity;
 using Microsoft.EntityFrameworkCore;
-using Web.Services;
-using Web.Extensions;
-
-
 
 var builder = WebApplication.CreateBuilder(args);
 
@@ -11,10 +9,10 @@ var connectionString = builder.Configuration.GetConnectionString("DefaultConnect
 builder.Services.AddControllersWithViews();
 builder.Services.AddDbContext<AppDbContext>(options =>
     options.UseSqlServer(connectionString));
+builder.Services.AddIdentity<User, IdentityRole<Guid>>()
+    .AddEntityFrameworkStores<AppDbContext>()
+    .AddSignInManager<SignInManager<User>>();
 builder.Services.AddHostedService<DbInitializer>();
-
-builder.Services.AddScoped<TokenService>();
-builder.Services.AddJWT(builder.Configuration);
 
 var app = builder.Build();
 
@@ -29,6 +27,7 @@ app.UseStaticFiles();
 
 app.UseRouting();
 
+app.UseAuthentication();
 app.UseAuthorization();
 
 app.MapControllerRoute(

@@ -1,6 +1,5 @@
 ﻿using Infrastructure;
 using Microsoft.AspNetCore.Mvc;
-using Microsoft.EntityFrameworkCore;
 using Domain.Models;
 using Domain.ViewModel;
 

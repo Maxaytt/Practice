@@ -7,4 +7,5 @@ public class Image
     public string ContentType { get; set; } = null!;
     public string Caption { get; set; } = null!;
     public Film Film { get; set; } = null!;
+    public Guid FilmId { get; set; }
 }

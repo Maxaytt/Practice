@@ -14,22 +14,20 @@
     <header>
         <nav class="navbar navbar-expand-sm navbar-toggleable-sm navbar-light bg-white border-bottom box-shadow mb-3">
             <div class="container-fluid">
-                <div class="collapse navbar-collapse nav-bar" >                   
-
-                            <a class="nav-link text-dark" asp-area="" asp-controller="Home" asp-action="Index">Films</a>
-                            <a class="nav-link text-dark" asp-area="" asp-controller="Films" asp-action="Create">Create Film</a>
-                            <button type="button" class="btn btn-link nav-link" onclick="location.href='@Url.Action("Privacy", "Home")'">
-                                <img src="~/assets/logout-3-svgrepo-com.svg" alt="Logout" style="height: 1.5rem;" />
-                            </button>
-                        
-                    
+                <div class="collapse navbar-collapse d-flex">
+                    <a class="nav-link text-dark" asp-area="" asp-controller="Home" asp-action="Index">Films</a>
+                    <a class="nav-link text-dark ms-auto" asp-area="" asp-controller="Films" asp-action="Create">Create Film</a>
+                    <a class="nav-link text-dark ml-auto" asp-area="" asp-controller="Profile" asp-action="Index">Profile</a>
+                    <a type="button" class="btn btn-link nav-link" asp-controller="Auth" asp-action="Logout">
+                        <img src="~/assets/logout.svg" alt="Logout" style="height: 1.5rem;" />
+                    </a>
                 </div>
             </div>
         </nav>
     </header>
 
+
     <main role="main" class="container-fluid" style="height: 100%;">
-        
             @RenderBody()
     </main>
 
