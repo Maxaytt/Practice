@@ -49,10 +49,19 @@ public class FilmsController : Controller
     [HttpPost]
     public IActionResult Create(CreateEditFilmVm film)
     {
-        //film.Id = Guid.NewGuid();
-        //_dbContext.Films.Add(film);
-        Film filmForDatabase = new Film();
-        Image imageForDatabse = new Image();
+        var imageForDatabse = new Image
+        {
+            Id = Guid.NewGuid(),
+            Caption = film.Name,
+            ContentType = film.ImageFile.ContentType
+        };
+        var filmForDatabase = new Film
+        {
+            Id = Guid.NewGuid(),
+            Name = film.Name,
+            Image = imageForDatabse,
+            ContentType = film.VideoFile.ContentType
+        };
 
         imageForDatabse.Id = film.Id;
         imageForDatabse.Caption = film.Name;
@@ -96,7 +105,9 @@ public class FilmsController : Controller
     public IActionResult Edit(Guid id)
     {
         var film = _dbContext.Films.Find(id);
-        CreateEditFilmVm ViewModel = new CreateEditFilmVm 
+        if (film is null) return NotFound($"film with id: {id} not found");
+
+        var viewModel = new CreateEditFilmVm 
         {
             Name = film.Name
         };
