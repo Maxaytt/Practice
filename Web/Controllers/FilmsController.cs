@@ -53,21 +53,47 @@ public class FilmsController : Controller
 
         if (film.ImageFile is not null)
         {
-            using var imageStream = new MemoryStream();
-            film.ImageFile.CopyTo(imageStream);
-            imageForDatabse.Content = imageStream.ToArray();
+            if (hasVideoFileGoodExtension(film.VideoFile))
+            {
+                using var imageStream = new MemoryStream();
+                film.ImageFile.CopyTo(imageStream);
+                imageForDatabse.Content = imageStream.ToArray();
+                _dbContext.Images.Add(imageForDatabse);
+                _dbContext.SaveChanges();
+            }
+            else
+            {
+                film.Communicate = "Bad image format. Upload image in one of supported formats.";
+                return View(film);
+            }
+        }
+        else
+        {
+            film.Communicate = "The Image hasn't been uploaded";
+            return View(film);
         }
 
         if (film.VideoFile is not null)
         {
-            using var filmStream = new MemoryStream();
-            film.VideoFile.CopyTo(filmStream);
-            filmForDatabase.Content = filmStream.ToArray();
+            if (hasVideoFileGoodExtension(film.VideoFile))
+            {
+                using var filmStream = new MemoryStream();
+                film.VideoFile.CopyTo(filmStream);
+                filmForDatabase.Content = filmStream.ToArray();
+                _dbContext.Films.Add(filmForDatabase);
+                _dbContext.SaveChanges();
+            }
+            else
+            {
+                film.Communicate = "Bad film format. Upload video in one of supported formats.";
+                return View(film);
+            }
         }
-
-        _dbContext.Images.Add(imageForDatabse);
-        _dbContext.Films.Add(filmForDatabase);
-        _dbContext.SaveChanges();
+        else
+        {
+            film.Communicate = "The Film hasn't been uploaded";
+            return View(film);
+        }
 
         return RedirectToAction("Index", "Home");
     }
@@ -164,6 +190,32 @@ public class FilmsController : Controller
             ContentType = film.ContentType,
         };
         return View(viewModel);
+    }
+
+    //check if file extension is supported
+    private bool hasVideoFileGoodExtension(IFormFile file)
+    {
+        if (file.ContentType == "video/mp4"
+            || file.ContentType == "video/ogg"
+            || file.ContentType == "video/webm")
+            return true;
+        else
+            return false;
+    }
+
+    //check if file extension is supported
+    private bool hasImageFileGoodExtension(IFormFile file)
+    {
+        if (file.ContentType == "image/jpg" || file.ContentType == "image/png"
+            || file.ContentType == "image/jpeg"
+            || file.ContentType == "image/webp"
+            || file.ContentType == "image/avif"
+            || file.ContentType == "image/svg+xml"
+            || file.ContentType == "image/x-icon"
+            || file.ContentType == "image/bmp")
+            return true;
+        else
+            return false;
     }
 }    
 
