@@ -22,6 +22,12 @@
             <label for="Content">Image</label>
             <input asp-for="ImageFile" type="file" accept="image/jpg, image/png, image/jpeg, image/webp, image/avif, image/svg+xml, image/x-icon, image/bmp	" required />
         </div>
+        <input asp-for="Id" hidden />
         <button type="submit" class="btn btn-primary">Create</button>
+        @if (Model.Communicate != null)
+        {
+            <div style="color:red">@Model.Communicate</div>
+        }
+
     </form>
 </div>
