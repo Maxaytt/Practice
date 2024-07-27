@@ -1,10 +1,8 @@
-﻿using Infrastructure;
-using Microsoft.AspNetCore.Mvc;
-using Domain.Models;
+﻿using Domain.Models;
 using Domain.ViewModel;
+using Infrastructure;
+using Microsoft.AspNetCore.Mvc;
 using Microsoft.EntityFrameworkCore;
-
-namespace Web.Controllers;
 
 [Route("[controller]")]
 public class FilmsController : Controller
@@ -16,154 +14,183 @@ public class FilmsController : Controller
         _dbContext = dbContext;
     }
 
-    [HttpGet("{id:guid}")]
-    public IActionResult GetById(Guid id)
-    {
-        var film = _dbContext.Films.Find(id);
-        if (film == null)
-            return NotFound();
-
-        return Ok(film);
-    }
-
-
     [HttpGet]
     public IActionResult Create()
     {
-        return View();
+        return View(new CreateEditFilmVm());
+    }
+
+    [HttpGet("{id:guid?}")]
+    public IActionResult Create(Guid? id)
+    {
+        if (id.HasValue)
+        {
+            var film = _dbContext.Films
+                .Include(f => f.Questions)
+                .ThenInclude(q => q.Answers)
+                .FirstOrDefault(f => f.Id == id);
+
+            if (film == null)
+                return NotFound();
+
+            var model = new CreateEditFilmVm
+            {
+                Id = film.Id,
+                Name = film.Name,
+                Questions = film.Questions.Select(q => new QuestionVm
+                {
+                    Id = q.Id,
+                    Text = q.Text,
+                    Answers = q.Answers.Select(a => new AnswerVm
+                    {
+                        Id = a.Id,
+                        Text = a.Text,
+                        IsTrue = a.IsTrue
+                    }).ToList()
+                }).ToList()
+            };
+
+            return View(model);
+        }
+
+        return View(new CreateEditFilmVm());
     }
 
 
     [HttpPost]
-    public IActionResult Create(CreateEditFilmVm film)
+    public IActionResult Create(CreateEditFilmVm model, IFormFile? videoFile, IFormFile? imageFile)
     {
-        var imageForDatabse = new Image
+        if (!ModelState.IsValid)
+        {
+            return View(model);
+        }
+
+        var imageForDatabase = new Image
         {
             Id = Guid.NewGuid(),
-            Caption = film.Name,
-            ContentType = film.ImageFile.ContentType,
+            Caption = model.Name,
+            ContentType = imageFile?.ContentType ?? "image/jpeg"
         };
+
+        if (imageFile != null)
+        {
+            using var imageStream = new MemoryStream();
+            imageFile.CopyTo(imageStream);
+            imageForDatabase.Content = imageStream.ToArray();
+        }
+
         var filmForDatabase = new Film
         {
             Id = Guid.NewGuid(),
-            Name = film.Name,
-            Image = imageForDatabse,
-            ContentType = film.VideoFile.ContentType
+            Name = model.Name,
+            Image = imageForDatabase,
+            ImageId = imageForDatabase.Id,
+            ContentType = videoFile?.ContentType ?? "video/mp4",
+            Questions = model.Questions.Select(q => new Question
+            {
+                Id = Guid.NewGuid(),
+                Text = q.Text,
+                Answers = q.Answers.Select(a => new Answer
+                {
+                    Id = Guid.NewGuid(),
+                    Text = a.Text,
+                    IsTrue = a.IsTrue
+                }).ToList()
+            }).ToList()
         };
 
-        if (film.ImageFile is not null)
+        if (videoFile != null)
         {
-            using var imageStream = new MemoryStream();
-            film.ImageFile.CopyTo(imageStream);
-            imageForDatabse.Content = imageStream.ToArray();
+            using var videoStream = new MemoryStream();
+            videoFile.CopyTo(videoStream);
+            filmForDatabase.Content = videoStream.ToArray();
         }
 
-        if (film.VideoFile is not null)
-        {
-            using var filmStream = new MemoryStream();
-            film.VideoFile.CopyTo(filmStream);
-            filmForDatabase.Content = filmStream.ToArray();
-        }
-
-        _dbContext.Images.Add(imageForDatabse);
+        _dbContext.Images.Add(imageForDatabase);
         _dbContext.Films.Add(filmForDatabase);
         _dbContext.SaveChanges();
 
         return RedirectToAction("Index", "Home");
     }
 
+    [HttpGet("AddQuestion/{filmId:guid}")]
+    public IActionResult AddQuestion(Guid filmId)
+    {
+        var question = new QuestionVm
+        {
+            FilmId = filmId,
+            Answers = Enumerable.Range(1, 4).Select(i => new AnswerVm { Id = Guid.NewGuid() }).ToList()
+        };
+
+        return View(question);
+    }
+
+    [HttpPost("AddQuestion")]
+    public IActionResult AddQuestion(QuestionVm questionVm)
+    {
+        var film = _dbContext.Films
+            .Include(f => f.Questions)
+            .FirstOrDefault(f => f.Id == questionVm.FilmId);
+
+        if (film == null)
+            return NotFound();
+
+        // Проверяем, что только один ответ отмечен как правильный
+        if (questionVm.Answers.Count(a => a.IsTrue) != 1)
+        {
+            ModelState.AddModelError("", "There must be exactly one correct answer.");
+            return View(questionVm);
+        }
+
+        var question = new Question
+        {
+            FilmId = questionVm.FilmId,
+            Text = questionVm.Text,
+            Answers = questionVm.Answers.Select(a => new Answer
+            {
+                Id = Guid.NewGuid(),
+                Text = a.Text,
+                IsTrue = a.IsTrue
+            }).ToList()
+        };
+
+        film.Questions.Add(question);
+        _dbContext.SaveChanges();
+
+        return RedirectToAction("Create", new { id = questionVm.FilmId });
+    }
+
+
+
+
     [HttpGet("Edit/{id:guid}")]
     public IActionResult Edit(Guid id)
     {
-        var film = _dbContext.Films.Find(id);
-        if (film is null) return NotFound($"film with id: {id} not found");
+        var film = _dbContext.Films
+            .Include(f => f.Questions)
+            .ThenInclude(q => q.Answers)
+            .FirstOrDefault(f => f.Id == id);
 
-        var viewModel = new CreateEditFilmVm 
-        {
-            Name = film.Name
-        };
-        viewModel.Id = id;
-        return View(viewModel);
-    }
-
-
-    [HttpPost("EditAndAdd")]
-    public IActionResult EditAndAdd(CreateEditFilmVm ViewModel)
-    {
-        var existingFilm = _dbContext.Films
-            .Include(f => f.Image)
-            .First(f=>f.Id == ViewModel.Id);
-        
-        if (ViewModel.Name is not null)
-        {
-            existingFilm.Name = ViewModel.Name;
-            existingFilm.Image.Caption = ViewModel.Name;
-        }
-
-        if(ViewModel.ImageFile is not null)
-        {
-            using var item = new MemoryStream();
-            ViewModel.ImageFile.CopyTo(item);
-            existingFilm.Image.Content = item.ToArray();
-        }
-
-        if (ViewModel.VideoFile is not null)
-        {
-            using var item = new MemoryStream();
-            ViewModel.VideoFile.CopyTo(item);
-            existingFilm.Content = item.ToArray();
-        }
-        _dbContext.Films.Update(existingFilm);
-        _dbContext.SaveChanges();
-        return RedirectToAction("Index", "Home");
-    }
-          
-    [HttpDelete("Delete/{id:guid}")]
-    public IActionResult Delete(Guid id)
-    {
-      var film = _dbContext.Films.Find(id);
-      if(film is null)
-        return NotFound();
-
-      _dbContext.Films.Remove(film);
-      _dbContext.SaveChanges();
-
-      return Ok();
-    }
-
-    [HttpGet("GetFilmAsResource/{id:guid}")]
-    public IActionResult GetFilmAsResource(Guid id)
-    {
-      var film = _dbContext.Films.Find(id);
-      if (film is null)
-         return NotFound();
-      return File(film.Content, film.ContentType, film.Name);
-    }
-
-    [HttpGet("GetImageAsResource/{id:guid}")]
-    public IActionResult GetImageAsResource(Guid id)
-    {
-        var image = _dbContext.Images.Find(id);
-        if (image is null)
-            return NotFound();
-        return File(image.Content, image.ContentType, image.Caption);
-    }
-
-    [HttpGet("PlayFilm/{id:guid}")]
-    public IActionResult PlayFilm(Guid id) 
-    {
-        var film = _dbContext.Films.Find(id);
-
-        if (film == null) 
+        if (film == null)
             return NotFound();
 
-        var viewModel = new PlayFilmVm()
+        var model = new CreateEditFilmVm
         {
-            Id = id,
+            Id = film.Id,
             Name = film.Name,
-            ContentType = film.ContentType,
+            Questions = film.Questions.Select(q => new QuestionVm
+            {
+                Id = q.Id,
+                Text = q.Text,
+                Answers = q.Answers.Select(a => new AnswerVm
+                {
+                    Id = a.Id,
+                    Text = a.Text,
+                    IsTrue = a.IsTrue
+                }).ToList()
+            }).ToList()
         };
-        return View(viewModel);
-    }
-}    
 
+        return View(model);
+    }
+}
