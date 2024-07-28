@@ -22,9 +22,8 @@
             <input asp-for="ImageFile" type="file" accept="image/jpg, image/png, image/jpeg, image/webp, image/avif, image/svg+xml, image/x-icon, image/bmp" />
         </div>
 
-        <!-- Button to navigate to Add Question page -->
         <div class="form-group">
-            <a href="@Url.Action("AddQuestion", "Films", new { filmId = Model.Id })" class="btn btn-secondary">Add Question</a>
+            <a asp-action="AddQuestion" asp-controller="Films" asp-route-filmId="@Model.Id" class="btn btn-secondary">Add Question</a>
         </div>
 
         <button type="submit" class="btn btn-primary">Create</button>

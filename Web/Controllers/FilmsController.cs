@@ -20,7 +20,7 @@ public class FilmsController : Controller
         return View(new CreateEditFilmVm());
     }
 
-    [HttpGet("{id:guid?}")]
+    [HttpGet("{id:guid}")]
     public IActionResult Create(Guid? id)
     {
         if (id.HasValue)
@@ -135,7 +135,6 @@ public class FilmsController : Controller
         if (film == null)
             return NotFound();
 
-        // Проверяем, что только один ответ отмечен как правильный
         if (questionVm.Answers.Count(a => a.IsTrue) != 1)
         {
             ModelState.AddModelError("", "There must be exactly one correct answer.");
@@ -159,9 +158,6 @@ public class FilmsController : Controller
 
         return RedirectToAction("Create", new { id = questionVm.FilmId });
     }
-
-
-
 
     [HttpGet("Edit/{id:guid}")]
     public IActionResult Edit(Guid id)
